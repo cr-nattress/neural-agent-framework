@@ -1,0 +1,43 @@
+# Netlify Configuration for Neural Agent
+
+[build]
+  command = "npm run build"
+  functions = "netlify/functions"
+  publish = ".next"
+
+[functions]
+  # Node.js runtime version
+  node_bundler = "esbuild"
+
+  # Function configuration
+  [[functions]]
+    node_version = "18.x"
+
+# Development configuration
+[dev]
+  command = "npm run dev"
+  port = 3000
+  functions = "netlify/functions"
+
+# Environment variables (configure in Netlify UI)
+# OPENAI_API_KEY
+# SUPABASE_URL
+# SUPABASE_ANON_KEY
+# SUPABASE_SERVICE_ROLE_KEY
+# NODE_ENV
+# LOG_LEVEL
+
+# Redirects
+[[redirects]]
+  from = "/.netlify/functions/:name"
+  to = "/.netlify/functions/:name"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"

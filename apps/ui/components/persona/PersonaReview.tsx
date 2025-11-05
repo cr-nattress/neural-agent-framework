@@ -96,7 +96,7 @@ export function PersonaReview({
           )}
 
           {/* Traits */}
-          {persona.traits.length > 0 && (
+          {persona.traits && persona.traits.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold mb-2">Personality Traits</h3>
               <div className="flex flex-wrap gap-2">
@@ -110,7 +110,7 @@ export function PersonaReview({
           )}
 
           {/* Interests */}
-          {persona.interests.length > 0 && (
+          {persona.interests && persona.interests.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold mb-2">Interests</h3>
               <div className="flex flex-wrap gap-2">
@@ -124,7 +124,7 @@ export function PersonaReview({
           )}
 
           {/* Skills */}
-          {persona.skills.length > 0 && (
+          {persona.skills && persona.skills.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold mb-2">Skills</h3>
               <div className="flex flex-wrap gap-2">
@@ -136,7 +136,7 @@ export function PersonaReview({
           )}
 
           {/* Values */}
-          {persona.values.length > 0 && (
+          {persona.values && persona.values.length > 0 && (
             <div>
               <h3 className="text-sm font-semibold mb-2">Core Values</h3>
               <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">

@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  functions = "netlify/functions"
+  functions = "apps/ui/netlify/functions"
   publish = "apps/ui/.next"
 
 [build.environment]
@@ -8,7 +8,7 @@
 
 [functions]
   node_bundler = "esbuild"
-  directory = "netlify/functions"
+  directory = "apps/ui/netlify/functions"
 
 [[redirects]]
   from = "/api/*"

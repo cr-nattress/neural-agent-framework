@@ -202,22 +202,6 @@ neural-agent/
 
 ## 🛠️ Development
 
-### Mock Development Mode
-
-Neural Agent uses a service abstraction pattern for independent frontend development:
-
-```typescript
-// Toggle between mock and real APIs
-NEXT_PUBLIC_USE_MOCK_DATA=true  // Development with mock data
-NEXT_PUBLIC_USE_MOCK_DATA=false // Production with real APIs
-```
-
-This allows:
-- ✅ Frontend and backend developed in parallel
-- ✅ Realistic UI/UX testing without backend
-- ✅ Easy switching between mock and production
-- ✅ Type-safe interfaces for all services
-
 ### Available Commands
 
 ```bash
@@ -235,24 +219,17 @@ npm run test:e2e     # End-to-end tests
 
 ### Project Structure
 
+The frontend uses a service abstraction pattern for type-safe API integration:
+
 ```typescript
-// Service abstraction example
+// Service interface defines contract
 interface IPersonaService {
   processPersona(input: PersonaInputPayload): Promise<ProcessPersonaResponse>;
   savePersona(payload: SavePersonaPayload): Promise<SavePersonaResponse>;
   getPersona(id: string): Promise<GetPersonaResponse>;
 }
 
-// Mock implementation for development
-export const mockPersonaService: IPersonaService = {
-  async processPersona(input) {
-    await delay(1500); // Simulate network
-    return { success: true, persona: mockData };
-  },
-  // ...
-};
-
-// Real implementation for production
+// Real implementation calls Netlify Functions
 export const apiPersonaService: IPersonaService = {
   async processPersona(input) {
     return fetch('/.netlify/functions/process-persona', { ... });
@@ -274,8 +251,8 @@ export const apiPersonaService: IPersonaService = {
 
 - **Persona** - Structured digital representation of an individual
 - **Multi-Agent System** - Collection of specialized AI agents working together
-- **Service Abstraction** - Interface-based design for swappable implementations
-- **Mock-First Development** - Build UI with simulated data before backend
+- **Service Abstraction** - Interface-based design for type-safe API integration
+- **Netlify Functions** - Serverless backend for persona processing and data storage
 
 ---
 
@@ -449,9 +426,81 @@ Special thanks to the open-source community for the amazing tools and inspiratio
 ---
 
 <div align="center">
-
-**[Website](https://neural-agent.example.com)** • **[Documentation](./docs)** • **[Roadmap](./PLAN.md)** • **[Contributing](./CONTRIBUTING.md)**
-
-Made with ❤️ by developers who believe in preserving human connections through technology
-
-</div>
+  
+  **[Website](https://neural-agent.example.com)** • **[Documentation](./docs)** • **[Roadmap](./PLAN.md)** • **[Contributing](./CONTRIBUTING.md)**
+  
+  Made with ❤️ by developers who believe in preserving human connections through technology
+  
+ </div>
+ 
+ ---
+ 
+ ## Landing Page and Authentication Plan
+ 
+ ### Smiile-inspired UI/UX Summary
+ - Hero with playful tone and strong CTA.
+ - Three-step "How it works" explainer.
+ - Social proof (testimonials/logos).
+ - Use cases section.
+ - Minimal copy, generous whitespace, friendly icons/illustrations.
+ 
+ ### Information Architecture & Routing (Next.js App Router)
+ - `/` — Marketing landing (public).
+ - `/auth/login` — Magic-link email capture (public).
+ - `/auth/callback` — Supabase callback to set session and redirect (public).
+ - `/builder` — Persona builder (auth required).
+ - `/chat` — Chat experience (auth required).
+ - Optional: `/demo` — Read-only demo.
+ 
+ ### Landing Page Sections
+ - Navbar (brand, anchors, primary CTA).
+ - Hero (headline/subheadline, CTAs to login/demo).
+ - How it works (3 steps mapped to product flow: add sources → generate persona → chat/validate).
+ - Social proof (quotes/logos).
+ - Use cases (research, product discovery, buyer personas, UX research).
+ - CTA strip (restate value + "Get started free").
+ - Footer (links, legal, socials).
+ - Visual system: shadcn/ui + Tailwind; `lucide-react` icons; light, inviting palette.
+ 
+ ### Authentication Flow (Supabase Magic Link)
+ - Deps: `@supabase/ssr`, `@supabase/supabase-js`.
+ - Clients: `lib/supabase/client.ts` (browser) and `lib/supabase/server.ts` (SSR).
+ - Service layer: `services/auth.service.ts` interface + `apiAuthService` implementation; export via `serviceFactory`.
+ - Pages: `app/auth/login/page.tsx` (email capture) and `app/auth/callback` (session + redirect).
+ - Guards: Protect `/builder` and `/chat`; redirect unauthenticated users to `/auth/login`.
+ - Profile bootstrap (optional): `profiles` table with RLS; create row on first sign-in.
+ 
+ ### Implementation Plan (Phases)
+ - **Phase 1 — Foundations**: Add deps, env vars, Supabase clients, auth service layer.
+ - **Phase 2 — Routing**: Move current `app/page.tsx` → `app/builder/page.tsx`; create new landing at `/`.
+ - **Phase 3 — Auth Pages**: Implement login and callback; post-login redirect to `/builder`.
+ - **Phase 4 — Route Protection**: Enforce auth on `/builder` and `/chat` with SSR-aware checks.
+ - **Phase 5 — Marketing Components**: Navbar, Hero, HowItWorks, Testimonials, UseCases, CTA, Footer.
+ - **Phase 6 — Profiles & Data**: Supabase `profiles` with RLS; ownership for personas.
+ - **Phase 7 — QA & Analytics**: Responsive/a11y, e2e login → builder, metadata/OG, optional analytics.
+ - **Phase 8 — Deployment**: Configure env and email sender; verify auth site URL.
+ 
+ ### Deliverables
+ - Marketing landing at `/` that mirrors the structure above.
+ - Working magic-link authentication with SSR session handling.
+ - Auth-protected `/builder` and `/chat` with smooth redirects.
+ - Optional user profiles with RLS.
+ 
+ ### Acceptance Criteria
+ - Landing includes Hero, 3-step explainer, testimonials, use cases, and strong CTAs.
+ - Magic-link flow works end-to-end; callback signs in and redirects to `/builder`.
+ - Unauthorized access to `/builder` or `/chat` redirects to `/auth/login`.
+ - Responsive layouts and basic accessibility checks pass.
+ - Content is easily editable (copy and assets).
+ 
+ ### Open Questions
+ - Branding: preferred palette/typography and logo assets?
+ - Public `/demo` route desired?
+ - Email sender: Supabase default vs custom SMTP/domain?
+ - Post-login redirect: `/builder` acceptable or prefer `/dashboard`?
+ - Real testimonials/logos available now vs placeholders?
+ 
+ ### Recommended Next Actions
+ - Confirm answers to open questions above.
+ - Approve Phase 1–2 work (deps/env + routing restructure + landing scaffolding).
+ - See [MAGIC_LINK_AUTH_PLAN.md](./MAGIC_LINK_AUTH_PLAN.md) for deeper technical details and code examples.

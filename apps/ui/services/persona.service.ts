@@ -1,6 +1,6 @@
 /**
  * Persona Service Interface
- * Defines the contract for both mock and real API implementations
+ * Defines the contract for API implementations
  */
 
 import {

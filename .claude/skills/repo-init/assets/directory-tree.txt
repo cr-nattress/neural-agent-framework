@@ -1,0 +1,34 @@
+.
+├── .claude/
+│   ├── system/
+│   │   ├── analyzer_prompt.md
+│   │   ├── bootstrap.md
+│   │   ├── context_prompt.md
+│   │   ├── memory.md
+│   │   └── system_prompt.md
+│   ├── logs/
+│   └── sessions/
+├── apps/
+│   ├── api/
+│   ├── agent/
+│   └── ui/
+├── packages/
+│   └── libs/
+├── docs/
+│   ├── backlog/
+│   │   ├── structure.md
+│   │   ├── epics/
+│   │   │   └── EP-000-foundational-setup.md
+│   │   ├── stories/
+│   │   │   └── ST-000-initialize-repo-scaffold.md
+│   │   ├── tasks/
+│   │   │   └── TK-000-bootstrap-script.md
+│   │   └── archive/
+│   ├── knowledge/
+│   ├── research/
+│   └── prompts/
+│       └── init.md
+├── .github/
+│   └── ABOUT.md
+├── OBJECTIVE.md
+└── README.md

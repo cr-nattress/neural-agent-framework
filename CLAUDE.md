@@ -54,13 +54,12 @@ neural-agent/
 1. **Persona Creation**: User input (text blocks + links) → Netlify Function → OpenAI processing → Structured JSON → Display for review → Save to Supabase
 2. **Chat Interface**: User message + persona ID → Netlify Function → Retrieve persona from Supabase → Centralized agent orchestrator → Multi-agent backend (Memory/Reasoning/Personality agents) → Response
 
-### Mock Service Architecture
+### Service Architecture
 
-The frontend is designed to be developed independently using mock services before backend is ready:
+The frontend integrates with live APIs through typed service interfaces:
 - Service interfaces define contracts (`services/persona.service.ts`, `services/chat.service.ts`)
-- Mock implementations provide realistic simulated data (`services/mock/`)
-- Service factory switches between mock and real APIs via environment variable
-- Switch from mock to real by changing `NEXT_PUBLIC_USE_MOCK_DATA` in `.env.local`
+- Real implementations call Netlify Functions (`services/api/api[Name]Service.ts`)
+- Service factory (`services/serviceFactory.ts`) exports active service implementations
 
 ## Development Commands
 
@@ -119,11 +118,11 @@ Refer to PLAN.md lines 482-594 for complete type definitions. Key types:
 ## Key Architectural Patterns
 
 ### Service Abstraction Pattern
-All API calls go through service interfaces that have both mock and real implementations:
+All API calls go through typed service interfaces with live implementations:
 - Define interface in `services/[name].service.ts`
-- Implement mock version in `services/mock/mock[Name]Service.ts`
-- Implement real version in `services/api/api[Name]Service.ts` (future)
-- Service factory (`services/serviceFactory.ts`) switches based on environment variable
+- Implement in `services/api/api[Name]Service.ts`
+- Service factory (`services/serviceFactory.ts`) exports active implementations
+- Type-safe integration with Netlify Functions backend
 
 ### Component Organization
 - `components/ui/`: shadcn components (never edit these directly)
@@ -171,10 +170,10 @@ Available custom slash commands in `.claude/commands/`:
 - Follow mobile-first responsive design
 
 ### API Integration
-- Always implement mock service first
-- Ensure mock services simulate realistic delays (500-2000ms)
-- Design real API service to match mock interface exactly
-- Test with mock data before switching to real APIs
+- All services connect to live Netlify Functions
+- Design API services to match service interface exactly
+- Implement comprehensive error handling for all API calls
+- Test functionality against actual backend
 
 ### Error Handling
 - All API calls should have try/catch blocks
@@ -189,11 +188,9 @@ Available custom slash commands in `.claude/commands/`:
 Building persona creation form with:
 1. Text block input (dynamic array)
 2. Link input (dynamic array)
-3. Submit → OpenAI processing
+3. Submit → Netlify Function for OpenAI processing
 4. Display structured persona
-5. Save to Supabase
-
-Start with mock services for independent frontend development.
+5. Save to Supabase storage
 
 ### Phase 2 Focus (Future)
 Building chat interface with:
@@ -206,8 +203,19 @@ Building chat interface with:
 
 ### Development (.env.local)
 ```bash
-# Use mock data for frontend development
-NEXT_PUBLIC_USE_MOCK_DATA=true
+# Supabase Configuration
+SUPABASE_URL=https://...
+NEXT_PUBLIC_SUPABASE_URL=https://...
+SUPABASE_ANON_KEY=eyJ...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+
+# OpenAI API
+OPENAI_API_KEY=sk-...
+
+# Application Configuration
+NODE_ENV=development
+LOG_LEVEL=debug
 ```
 
 ### Production (Netlify)
@@ -219,9 +227,6 @@ OPENAI_API_KEY=sk-...
 SUPABASE_URL=https://...
 SUPABASE_ANON_KEY=eyJ...
 SUPABASE_SERVICE_ROLE_KEY=eyJ...
-
-# Feature flags
-NEXT_PUBLIC_USE_MOCK_DATA=false
 ```
 
 ## Git Workflow
@@ -240,7 +245,6 @@ This is an early-stage project with active development. When working on features
   - Tech stack (lines 352-398)
   - Type definitions (lines 479-594)
   - File structure (lines 597-673)
-  - Mock service architecture (lines 675-953)
   - Implementation phases (lines 956-1231)
 - **OBJECTIVE.md**: Project objectives and phased roadmap
 - **apps/ui/backlog/**: Detailed task breakdowns for UI development
