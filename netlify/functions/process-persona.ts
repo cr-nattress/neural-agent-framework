@@ -87,8 +87,14 @@ export const handler: Handler = async (
     "Content-Type": "application/json",
   };
 
+  console.log("[process-persona] Handler called");
+  console.log("[process-persona] Method:", event.httpMethod);
+  console.log("[process-persona] Body:", event.body);
+  console.log("[process-persona] OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
+
   // Handle OPTIONS request for CORS preflight
   if (event.httpMethod === "OPTIONS") {
+    console.log("[process-persona] Returning OPTIONS response");
     return {
       statusCode: 200,
       headers,
@@ -98,6 +104,7 @@ export const handler: Handler = async (
 
   // Only allow POST requests
   if (event.httpMethod !== "POST") {
+    console.error("[process-persona] Invalid method:", event.httpMethod);
     return {
       statusCode: 405,
       headers,
@@ -106,8 +113,10 @@ export const handler: Handler = async (
   }
 
   try {
+    console.log("[process-persona] Parsing request body");
     // Parse request body
     const payload: PersonaInputPayload = JSON.parse(event.body || "{}");
+    console.log("[process-persona] Parsed payload:", JSON.stringify(payload));
 
     // Validate input
     if (!payload.textBlocks && !payload.links) {
@@ -154,6 +163,11 @@ export const handler: Handler = async (
     }
 
     // Call OpenAI API
+    console.log("[process-persona] Preparing to call OpenAI API");
+    console.log("[process-persona] Content to analyze length:", contentToAnalyze.length);
+    console.log("[process-persona] OpenAI client initialized:", !!openai);
+
+    console.log("[process-persona] Calling openai.chat.completions.create...");
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -171,13 +185,20 @@ export const handler: Handler = async (
       response_format: { type: "json_object" },
     });
 
+    console.log("[process-persona] OpenAI API call successful");
+    console.log("[process-persona] Response choices count:", completion.choices.length);
+
     // Parse OpenAI response
     const responseContent = completion.choices[0]?.message?.content;
+    console.log("[process-persona] Response content retrieved, length:", responseContent?.length || 0);
+
     if (!responseContent) {
       throw new Error("No response from OpenAI");
     }
 
+    console.log("[process-persona] Parsing JSON response...");
     const extractedData = JSON.parse(responseContent);
+    console.log("[process-persona] Extracted data keys:", Object.keys(extractedData));
 
     // Build persona object
     const persona: Persona = {
