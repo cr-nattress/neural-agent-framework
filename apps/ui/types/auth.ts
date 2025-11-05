@@ -17,10 +17,10 @@ export interface SendMagicLinkResponse {
  */
 export interface User {
   id: string;
-  email: string;
+  email: string | null;
   user_metadata?: Record<string, any>;
-  created_at: string;
-  updated_at: string;
+  created_at: string | undefined;
+  updated_at: string | undefined;
 }
 
 /**
