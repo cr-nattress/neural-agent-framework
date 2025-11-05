@@ -1,20 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { PersonaInputPayload, Persona } from "@/types/persona";
-import { personaService } from "@/services/serviceFactory";
+import { personaService, authService } from "@/services/serviceFactory";
 import { TextBlockInput } from "@/components/persona/TextBlockInput";
 import { LinkInput } from "@/components/persona/LinkInput";
 import { PersonaReview } from "@/components/persona/PersonaReview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 type ViewMode = "form" | "review";
 
 export default function Home() {
+  const router = useRouter();
   const { toast } = useToast();
+  const { user, isLoading, signOut } = useAuth();
   const [viewMode, setViewMode] = useState<ViewMode>("form");
   const [textBlocks, setTextBlocks] = useState<string[]>([""]);
   const [links, setLinks] = useState<string[]>([""]);
@@ -116,14 +120,78 @@ export default function Home() {
     setViewMode("form");
   };
 
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push("/auth/login");
+      toast({
+        title: "Signed Out",
+        description: "You have been successfully signed out",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Check authentication and redirect if needed
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push("/auth/login");
+    }
+  }, [user, isLoading, router]);
+
+  // Show loading state while checking authentication
+  if (isLoading) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </main>
+    );
+  }
+
+  // Don't render if not authenticated (redirect in useEffect above)
+  if (!user) {
+    return null;
+  }
+
   return (
     <main className="min-h-screen bg-background">
+      {/* Navigation Bar */}
+      <nav className="border-b bg-card">
+        <div className="container mx-auto px-4 py-4 max-w-4xl flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold">Neural Agent</h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="text-sm text-muted-foreground">
+              {user.email}
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSignOut}
+              className="gap-2"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </nav>
+
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center space-y-4 mb-8">
-          <h1 className="text-4xl font-bold tracking-tight">Neural Agent</h1>
+          <h2 className="text-4xl font-bold tracking-tight">Create a Persona</h2>
           <p className="text-lg text-muted-foreground">
-            Create AI-powered digital personas through data processing
+            Add text blocks and links about the person you want to model
           </p>
         </div>
 
