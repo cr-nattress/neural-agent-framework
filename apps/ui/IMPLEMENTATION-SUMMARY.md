@@ -560,9 +560,9 @@ curl -X POST http://localhost:8888/.netlify/functions/process-persona \
    - Verify error handling
 
 3. **Connect Frontend**
-   - Update service factory
-   - Switch from mock to real APIs
-   - Set `NEXT_PUBLIC_USE_MOCK_DATA=false`
+   - Frontend services connect to live Netlify Functions
+   - No configuration toggles - all requests go directly to backend
+   - Verify service factory exports real API implementations
 
 4. **Monitor**
    - Track error rates

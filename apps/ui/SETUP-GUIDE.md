@@ -80,9 +80,9 @@ curl -X POST http://localhost:3001/.netlify/functions/process-persona \
 Expected response: **200 with structured persona**
 
 ### 5. Once Working
-- The frontend will automatically use real APIs
-- Stop using mock data
-- Everything will work end-to-end
+- The frontend automatically calls real Netlify Functions
+- All requests go directly to the backend
+- Everything works end-to-end with live APIs
 
 ---
 

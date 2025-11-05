@@ -255,13 +255,7 @@ curl http://localhost:8888/.netlify/functions/list-personas?limit=20&offset=0
 
 ### Option 3: Frontend Integration
 
-Update `services/serviceFactory.ts`:
-```typescript
-// Instead of mock:
-NEXT_PUBLIC_USE_MOCK_DATA=false
-
-// Functions will be called automatically
-```
+Frontend is configured to call Netlify Functions via `services/serviceFactory.ts` which exports the real API services. All requests go directly to the backend.
 
 ---
 
@@ -361,11 +355,7 @@ netlify dev
 - Verify access
 
 ### Step 4: Integrate with Frontend (30 min)
-```typescript
-// Update services/serviceFactory.ts
-NEXT_PUBLIC_USE_MOCK_DATA=false
-// Frontend will use real APIs
-```
+Frontend services are configured to call Netlify Functions directly. No configuration changes needed - it's already live.
 
 ### Step 5: Deploy to Netlify (5 min)
 - Push to git
