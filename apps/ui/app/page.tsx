@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { PersonaInputPayload, Persona } from "@/types/persona";
-import { personaService, isMockMode } from "@/services/serviceFactory";
+import { personaService } from "@/services/serviceFactory";
 import { TextBlockInput } from "@/components/persona/TextBlockInput";
 import { LinkInput } from "@/components/persona/LinkInput";
 import { PersonaReview } from "@/components/persona/PersonaReview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Sparkles } from "lucide-react";
 
@@ -122,14 +121,7 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="text-center space-y-4 mb-8">
-          <div className="flex items-center justify-center gap-2">
-            <h1 className="text-4xl font-bold tracking-tight">Neural Agent</h1>
-            {isMockMode() && (
-              <Badge variant="outline" className="text-xs">
-                Mock Mode
-              </Badge>
-            )}
-          </div>
+          <h1 className="text-4xl font-bold tracking-tight">Neural Agent</h1>
           <p className="text-lg text-muted-foreground">
             Create AI-powered digital personas through data processing
           </p>
@@ -183,17 +175,6 @@ export default function Home() {
                 Reset
               </Button>
             </div>
-
-            {isMockMode() && (
-              <Card className="bg-muted">
-                <CardContent className="pt-6">
-                  <p className="text-sm text-muted-foreground">
-                    <strong>Mock Mode:</strong> Using simulated data for development.
-                    The persona will be generated from mock data with a realistic delay (1.5-2s).
-                  </p>
-                </CardContent>
-              </Card>
-            )}
           </form>
         )}
 
