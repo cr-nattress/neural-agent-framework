@@ -11,29 +11,34 @@ import { mockPersonaService } from "./mock/mockPersonaService";
  * Determine if we should use mock data
  * Controlled by NEXT_PUBLIC_USE_MOCK_DATA environment variable
  */
-const USE_MOCK =
-  process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true" ||
-  process.env.NEXT_PUBLIC_USE_MOCK_DATA === undefined; // Default to mock for development
+function getUseMock(): boolean {
+  // Check if we're in browser environment
+  if (typeof window !== "undefined") {
+    return process.env.NEXT_PUBLIC_USE_MOCK_DATA === "true" ||
+           process.env.NEXT_PUBLIC_USE_MOCK_DATA === undefined;
+  }
+  // Server-side: default to mock
+  return true;
+}
 
 /**
  * Persona Service Instance
  * Returns mock or real implementation based on environment
  */
-export const personaService: IPersonaService = USE_MOCK
-  ? mockPersonaService
-  : mockPersonaService; // TODO: Switch to apiPersonaService when ready
-  // : apiPersonaService;
+export const personaService: IPersonaService = mockPersonaService; // Always use mock for now
+  // TODO: Implement real API switching
+  // getUseMock() ? mockPersonaService : apiPersonaService;
 
 /**
  * Get current service mode
  */
 export function getServiceMode(): "mock" | "real" {
-  return USE_MOCK ? "mock" : "real";
+  return getUseMock() ? "mock" : "real";
 }
 
 /**
  * Check if running in mock mode
  */
 export function isMockMode(): boolean {
-  return USE_MOCK;
+  return getUseMock();
 }
