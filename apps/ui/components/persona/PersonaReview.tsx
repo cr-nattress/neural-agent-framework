@@ -11,7 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Save, Download, ArrowLeft } from "lucide-react";
+import { Save, Download, ArrowLeft, MessageSquare } from "lucide-react";
+import Link from "next/link";
 
 interface PersonaReviewProps {
   persona: Persona;
@@ -46,6 +47,14 @@ export function PersonaReview({
           Back to Edit
         </Button>
         <div className="flex gap-2">
+          {persona.id && (
+            <Link href={`/chat?persona_id=${persona.id}`}>
+              <Button variant="default" className="gap-2">
+                <MessageSquare className="h-4 w-4" />
+                Chat with Persona
+              </Button>
+            </Link>
+          )}
           <Button
             variant="outline"
             onClick={handleExport}

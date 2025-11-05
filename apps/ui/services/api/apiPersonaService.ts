@@ -98,14 +98,32 @@ export class ApiPersonaService implements IPersonaService {
   }
 
   /**
-   * Get persona by ID
-   * TODO: Implement Netlify function for retrieval
+   * Get persona by ID from Supabase via Netlify Function
    */
   async getPersona(id: string): Promise<GetPersonaResponse> {
-    return {
-      success: false,
-      error: "Not implemented yet",
-    };
+    try {
+      const response = await fetch(`${this.baseUrl}/.netlify/functions/get-persona`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ persona_id: id }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data: GetPersonaResponse = await response.json();
+      return data;
+    } catch (error: any) {
+      console.error("API Error - getPersona:", error);
+      return {
+        success: false,
+        error: error.message || "Failed to get persona",
+      };
+    }
   }
 
   /**
