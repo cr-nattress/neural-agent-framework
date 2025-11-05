@@ -1,0 +1,25 @@
+{
+  "commands": {
+    "react-audit": {
+      "description": "Analyze codebase against Next.js/React best practices and generate recommendations"
+    },
+    "plan": {
+      "description": "Generate comprehensive implementation plans from project objectives"
+    },
+    "backlog": {
+      "description": "Convert implementation plans into executable Agile backlogs with epics, stories, and tasks"
+    },
+    "generate-readme": {
+      "description": "Generate beautiful, comprehensive README.md files for GitHub repositories"
+    },
+    "analyze-solver": {
+      "description": "Analyze problem-solving approaches and thinking patterns to improve collaboration"
+    },
+    "persona": {
+      "description": "Create detailed developer personas for AI personalization"
+    },
+    "psych-profile": {
+      "description": "Generate psychological profiles for better team collaboration"
+    }
+  }
+}
