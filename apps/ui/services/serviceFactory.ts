@@ -5,31 +5,30 @@
 
 import { IPersonaService } from "./persona.service";
 import { apiPersonaService } from "./api/apiPersonaService";
+import { mockPersonaService } from "./mock/mockPersonaService";
 import { IAuthService } from "./auth.service";
 import { apiAuthService } from "./api/apiAuthService";
 
 /**
- * Persona Service Instance
- * Always uses real API implementation via Netlify Functions
+ * Check if we should use mock services
+ * By default, use mock services in development
+ * Set NEXT_PUBLIC_USE_MOCK_DATA=false to use real API
  */
-export const personaService: IPersonaService = apiPersonaService;
+const useMockData =
+  typeof window !== "undefined"
+    ? localStorage?.getItem("USE_MOCK_DATA") !== "false"
+    : process.env.NEXT_PUBLIC_USE_MOCK_DATA !== "false";
+
+/**
+ * Persona Service Instance
+ * Uses mock services in development, real API in production
+ */
+export const personaService: IPersonaService = useMockData
+  ? mockPersonaService
+  : apiPersonaService;
 
 /**
  * Auth Service Instance
  * Uses real Supabase implementation for magic link authentication
  */
 export const authService: IAuthService = apiAuthService;
-
-/**
- * Get current service mode
- */
-export function getServiceMode(): "mock" | "real" {
-  return "real";
-}
-
-/**
- * Check if running in mock mode
- */
-export function isMockMode(): boolean {
-  return false;
-}

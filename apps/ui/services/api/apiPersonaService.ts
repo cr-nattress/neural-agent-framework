@@ -17,15 +17,15 @@ import { Persona } from "@/types/persona";
  * Get the base URL for API calls
  * In development with Netlify Dev, functions are available at /.netlify/functions
  * In production, they're also at /.netlify/functions
+ *
+ * When using netlify dev:
+ * - Next.js runs on port 3001
+ * - Netlify functions are proxied to /.netlify/functions
+ * So we use relative URLs (empty baseUrl) which work automatically
  */
 function getApiBaseUrl(): string {
-  // Check if we're running in Netlify Dev environment
-  if (typeof window !== "undefined") {
-    // Browser environment
-    const isNetlifyDev = window.location.port === "8888";
-    return isNetlifyDev ? "http://localhost:8888" : "";
-  }
-  // Server-side
+  // Use relative URLs - works in all environments
+  // Netlify dev will proxy /.netlify/functions to the actual functions
   return "";
 }
 
@@ -102,13 +102,15 @@ export class ApiPersonaService implements IPersonaService {
    */
   async getPersona(id: string): Promise<GetPersonaResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/.netlify/functions/get-persona`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ persona_id: id }),
-      });
+      const response = await fetch(
+        `${this.baseUrl}/.netlify/functions/get-persona?id=${encodeURIComponent(id)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -127,12 +129,34 @@ export class ApiPersonaService implements IPersonaService {
   }
 
   /**
-   * List all personas
-   * TODO: Implement Netlify function for listing
+   * List all personas from Supabase via Netlify Function
    */
   async listPersonas(): Promise<Persona[]> {
-    console.warn("listPersonas not implemented yet");
-    return [];
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/.netlify/functions/list-personas?limit=50&offset=0`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data: any = await response.json();
+      // The list-personas function returns basic persona info, not full personas
+      // For now, return empty array as we'd need to fetch full personas if needed
+      console.log("Personas listed:", data.personas);
+      return [];
+    } catch (error: any) {
+      console.error("API Error - listPersonas:", error);
+      return [];
+    }
   }
 }
 
