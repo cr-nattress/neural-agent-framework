@@ -49,14 +49,24 @@ export default function Home() {
     setIsProcessing(true);
 
     try {
+      console.log("[page.tsx] handleSubmit started");
+      console.log("[page.tsx] Text blocks:", filteredTextBlocks);
+      console.log("[page.tsx] Links:", filteredLinks);
+
       const payload: PersonaInputPayload = {
         textBlocks: filteredTextBlocks,
         links: filteredLinks,
       };
 
+      console.log("[page.tsx] About to call personaService.processPersona");
+      console.log("[page.tsx] Service instance:", personaService);
+
       const response = await personaService.processPersona(payload);
 
+      console.log("[page.tsx] Got response from processPersona:", response);
+
       if (response.success && response.persona) {
+        console.log("[page.tsx] Success! Setting persona:", response.persona);
         setPersona(response.persona);
         setViewMode("review");
         toast({
@@ -64,13 +74,17 @@ export default function Home() {
           description: "Review the structured persona data below",
         });
       } else {
+        console.error("[page.tsx] Response not successful:", response);
         toast({
           title: "Processing Failed",
           description: response.error || "Failed to process persona data",
           variant: "destructive",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("[page.tsx] CATCH block error:", error);
+      console.error("[page.tsx] Error message:", error.message);
+      console.error("[page.tsx] Error stack:", error.stack);
       toast({
         title: "Error",
         description: "An unexpected error occurred",

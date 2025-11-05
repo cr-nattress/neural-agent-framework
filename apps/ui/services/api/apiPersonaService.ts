@@ -43,8 +43,14 @@ export class ApiPersonaService implements IPersonaService {
    * Process persona data using OpenAI via Netlify Function
    */
   async processPersona(input: PersonaInputPayload): Promise<ProcessPersonaResponse> {
+    const url = `${this.baseUrl}/.netlify/functions/process-persona`;
+    console.log("[apiPersonaService] processPersona called");
+    console.log("[apiPersonaService] URL:", url);
+    console.log("[apiPersonaService] Input payload:", JSON.stringify(input, null, 2));
+
     try {
-      const response = await fetch(`${this.baseUrl}/.netlify/functions/process-persona`, {
+      console.log("[apiPersonaService] Sending fetch request...");
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -52,15 +58,27 @@ export class ApiPersonaService implements IPersonaService {
         body: JSON.stringify(input),
       });
 
+      console.log("[apiPersonaService] Response status:", response.status, response.statusText);
+      console.log("[apiPersonaService] Response headers:", {
+        contentType: response.headers.get("content-type"),
+        contentLength: response.headers.get("content-length"),
+      });
+
       if (!response.ok) {
+        console.error("[apiPersonaService] Response not ok, attempting to parse error");
         const errorData = await response.json().catch(() => ({}));
+        console.error("[apiPersonaService] Error data:", errorData);
         throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
 
+      console.log("[apiPersonaService] Parsing response body...");
       const data: ProcessPersonaResponse = await response.json();
+      console.log("[apiPersonaService] Parsed response:", JSON.stringify(data, null, 2));
       return data;
     } catch (error: any) {
-      console.error("API Error - processPersona:", error);
+      console.error("[apiPersonaService] CATCH ERROR:", error);
+      console.error("[apiPersonaService] Error message:", error.message);
+      console.error("[apiPersonaService] Error stack:", error.stack);
       return {
         success: false,
         error: error.message || "Failed to process persona",
