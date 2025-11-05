@@ -128,7 +128,7 @@ export const apiAuthService: IAuthService = {
     const supabase = createBrowserClient();
 
     const { data } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (_event: string, session: any) => {
         if (session?.user) {
           callback({
             id: session.user.id,

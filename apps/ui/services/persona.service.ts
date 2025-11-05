@@ -3,6 +3,15 @@
  * Defines the contract for API implementations
  */
 
+export type {
+  PersonaInputPayload,
+  ProcessPersonaResponse,
+  SavePersonaPayload,
+  SavePersonaResponse,
+  GetPersonaResponse,
+  Persona,
+} from "@/types/persona";
+
 import {
   PersonaInputPayload,
   ProcessPersonaResponse,
