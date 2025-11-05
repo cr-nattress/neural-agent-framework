@@ -133,7 +133,7 @@ export class ApiPersonaService implements IPersonaService {
   async getPersona(id: string): Promise<GetPersonaResponse> {
     try {
       const response = await fetch(
-        `${this.baseUrl}/.netlify/functions/get-persona?id=${encodeURIComponent(id)}`,
+        `${this.baseUrl}/.netlify/functions/get-persona?persona_id=${encodeURIComponent(id)}`,
         {
           method: "GET",
           headers: {
