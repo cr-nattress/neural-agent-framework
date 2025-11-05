@@ -5,7 +5,7 @@
 
 import { IPersonaService } from "./persona.service";
 import { mockPersonaService } from "./mock/mockPersonaService";
-// import { apiPersonaService } from "./api/apiPersonaService"; // TODO: Implement real API service
+import { apiPersonaService } from "./api/apiPersonaService";
 
 /**
  * Determine if we should use mock data
@@ -25,9 +25,7 @@ function getUseMock(): boolean {
  * Persona Service Instance
  * Returns mock or real implementation based on environment
  */
-export const personaService: IPersonaService = mockPersonaService; // Always use mock for now
-  // TODO: Implement real API switching
-  // getUseMock() ? mockPersonaService : apiPersonaService;
+export const personaService: IPersonaService = getUseMock() ? mockPersonaService : apiPersonaService;
 
 /**
  * Get current service mode

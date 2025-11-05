@@ -1,0 +1,23 @@
+{
+  "name": "neural-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered digital persona creation framework with multi-agent simulation",
+  "scripts": {
+    "dev": "netlify dev",
+    "dev:ui": "cd apps/ui && npm run dev",
+    "build": "cd apps/ui && npm run build",
+    "deploy": "netlify deploy --prod",
+    "install:all": "npm install && cd apps/ui && npm install"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.36.4"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10",
+    "openai": "^4.76.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
