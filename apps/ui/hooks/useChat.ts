@@ -5,6 +5,7 @@
 
 import { useState, useCallback } from "react";
 import { ChatMessage, ChatRequest, ChatResponse } from "@/types/persona";
+import { getApiBaseUrl } from "@/lib/api";
 
 interface UseChatReturn {
   messages: ChatMessage[];
@@ -45,7 +46,8 @@ export function useChat(personaId: string | null): UseChatReturn {
         };
 
         // Call chat API
-        const response = await fetch("/.netlify/functions/chat", {
+        const baseUrl = getApiBaseUrl();
+        const response = await fetch(`${baseUrl}/.netlify/functions/chat`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(request),

@@ -12,34 +12,7 @@ import {
   GetPersonaResponse,
 } from "../persona.service";
 import { Persona } from "@/types/persona";
-
-/**
- * Get the base URL for API calls
- *
- * In development with Netlify Dev:
- * - Next.js UI runs on port 3001
- * - Netlify Dev runs on port 8889 with function proxying
- * - API calls must go to port 8889 to reach the functions
- *
- * In production:
- * - Both UI and functions are served from the same domain
- * - Use relative URLs (empty baseUrl)
- */
-function getApiBaseUrl(): string {
-  // Check if we're in development by looking for localhost
-  if (typeof window !== "undefined" && window.location.hostname === "localhost") {
-    // In development, Netlify Dev serves both the framework and functions
-    // If we're on the UI port (3001+), redirect to the Netlify Dev port (8889)
-    const currentPort = window.location.port;
-    if (currentPort && parseInt(currentPort) >= 3000 && parseInt(currentPort) <= 3999) {
-      // This is the Next.js dev server, API calls must go to Netlify Dev on 8889
-      return "http://localhost:8889";
-    }
-  }
-
-  // In production or when already on Netlify Dev port, use relative URLs
-  return "";
-}
+import { getApiBaseUrl } from "@/lib/api";
 
 /**
  * API Persona Service Class
@@ -48,7 +21,13 @@ export class ApiPersonaService implements IPersonaService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = getApiBaseUrl();
+    // Get base URL at construction time (might be called from browser context)
+    try {
+      this.baseUrl = getApiBaseUrl();
+    } catch {
+      // Fallback to relative URLs if called outside browser context
+      this.baseUrl = "";
+    }
   }
 
   /**
