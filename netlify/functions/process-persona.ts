@@ -44,9 +44,16 @@ interface ProcessPersonaResponse {
 }
 
 // Initialize OpenAI client
+console.log("[module-init] OPENAI_API_KEY environment variable check:");
+console.log("[module-init] OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
+console.log("[module-init] OPENAI_API_KEY length:", (process.env.OPENAI_API_KEY || "").length);
+console.log("[module-init] OPENAI_API_KEY prefix:", (process.env.OPENAI_API_KEY || "").substring(0, 20));
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+console.log("[module-init] OpenAI client initialized successfully");
 
 /**
  * OpenAI System Prompt for Persona Extraction
@@ -238,7 +245,23 @@ export const handler: Handler = async (
       body: JSON.stringify(response),
     };
   } catch (error: any) {
-    console.error("Error processing persona:", error);
+    console.error("=== ERROR CAUGHT IN HANDLER ===");
+    console.error("Error object:", error);
+    console.error("Error message:", error.message);
+    console.error("Error name:", error.name);
+    console.error("Error stack:", error.stack);
+
+    // If it's an OpenAI API error, log additional details
+    if (error.status !== undefined) {
+      console.error("OpenAI API error status:", error.status);
+      console.error("OpenAI API error code:", error.code);
+      console.error("OpenAI API error headers:", error.headers);
+    }
+
+    // If it's a JSON parse error
+    if (error instanceof SyntaxError) {
+      console.error("JSON Parse error - the response was not valid JSON");
+    }
 
     return {
       statusCode: 500,
